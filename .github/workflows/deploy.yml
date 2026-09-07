@@ -39,25 +39,31 @@ jobs:
       - name: Astro-Site bauen
         run: npm run build
 
-      - name: Build-Ergebnis prüfen
+      - name: Build-Ergebnis pruefen
         run: |
           test -f dist/index.html || { echo "::error::dist/index.html fehlt - Build war leer, Deployment abgebrochen."; exit 1; }
           echo "Build OK: $(find dist -type f | wc -l) Dateien, $(du -sh dist | cut -f1)"
 
       # --- Ab hier nur bei Push auf main bzw. manuellem Start ---
 
-      - name: SSH-Key laden
+      - name: SSH-Zugang einrichten
         if: github.event_name != 'pull_request'
-        uses: webfactory/ssh-agent@v0.9.1
-        with:
-          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
-
-      - name: Host-Fingerprint hinterlegen
-        if: github.event_name != 'pull_request'
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          SSH_KNOWN_HOSTS: ${{ secrets.SSH_KNOWN_HOSTS }}
         run: |
+          set -euo pipefail
           mkdir -p ~/.ssh && chmod 700 ~/.ssh
-          echo "${{ secrets.SSH_KNOWN_HOSTS }}" > ~/.ssh/known_hosts
-          chmod 600 ~/.ssh/known_hosts
+          # tr entfernt CR aus der Windows-Zwischenablage, printf haengt den
+          # von OpenSSH verlangten Zeilenumbruch am Dateiende an.
+          printf '%s\n' "$SSH_PRIVATE_KEY" | tr -d '\r' > ~/.ssh/deploy_key
+          printf '%s\n' "$SSH_KNOWN_HOSTS" | tr -d '\r' > ~/.ssh/known_hosts
+          chmod 600 ~/.ssh/deploy_key ~/.ssh/known_hosts
+          if ! ssh-keygen -y -f ~/.ssh/deploy_key > /dev/null 2>&1; then
+            echo "::error::SSH_PRIVATE_KEY ist unbrauchbar. Pruefen: kompletter Inhalt inkl. BEGIN-/END-Zeile? Passphrase-frei? Keine fuehrenden Leerzeichen?"
+            exit 1
+          fi
+          echo "Key geladen, Fingerprint: $(ssh-keygen -lf ~/.ssh/deploy_key | awk '{print $2}')"
 
       - name: Per rsync deployen
         if: github.event_name != 'pull_request'
@@ -74,9 +80,9 @@ jobs:
             RSYNC_FLAGS="$RSYNC_FLAGS --dry-run"
             echo "::notice::DRY RUN - es wird nichts geschrieben."
           fi
-          # Server-eigene Dateien im Zielverzeichnis vor --delete schützen:
+          # Server-eigene Dateien im Zielverzeichnis vor --delete schuetzen:
           rsync $RSYNC_FLAGS \
             --exclude='.htaccess' \
             --exclude='.well-known/' \
-            -e "ssh -p ${SSH_PORT}" \
+            -e "ssh -i ~/.ssh/deploy_key -o IdentitiesOnly=yes -p ${SSH_PORT}" \
             dist/ "${SSH_USER}@${SSH_HOST}:${TARGET_PATH}"
