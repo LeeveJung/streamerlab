@@ -1,0 +1,82 @@
+name: Build & Deploy
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Nur simulieren (rsync --dry-run), nichts hochladen'
+        type: boolean
+        default: false
+
+# Nie zwei Deployments gleichzeitig auf denselben Server.
+concurrency:
+  group: deploy-production
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Repository auschecken
+        uses: actions/checkout@v5
+
+      - name: Node einrichten
+        uses: actions/setup-node@v5
+        with:
+          node-version: '24'
+          cache: 'npm'
+
+      - name: Dependencies installieren
+        run: npm ci
+
+      - name: Astro-Site bauen
+        run: npm run build
+
+      - name: Build-Ergebnis prüfen
+        run: |
+          test -f dist/index.html || { echo "::error::dist/index.html fehlt - Build war leer, Deployment abgebrochen."; exit 1; }
+          echo "Build OK: $(find dist -type f | wc -l) Dateien, $(du -sh dist | cut -f1)"
+
+      # --- Ab hier nur bei Push auf main bzw. manuellem Start ---
+
+      - name: SSH-Key laden
+        if: github.event_name != 'pull_request'
+        uses: webfactory/ssh-agent@v0.9.1
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+      - name: Host-Fingerprint hinterlegen
+        if: github.event_name != 'pull_request'
+        run: |
+          mkdir -p ~/.ssh && chmod 700 ~/.ssh
+          echo "${{ secrets.SSH_KNOWN_HOSTS }}" > ~/.ssh/known_hosts
+          chmod 600 ~/.ssh/known_hosts
+
+      - name: Per rsync deployen
+        if: github.event_name != 'pull_request'
+        env:
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+          SSH_USER: ${{ secrets.SSH_USER }}
+          SSH_PORT: ${{ secrets.SSH_PORT || '22' }}
+          TARGET_PATH: ${{ secrets.DEPLOY_PATH }}
+          DRY_RUN: ${{ inputs.dry_run }}
+        run: |
+          set -euo pipefail
+          RSYNC_FLAGS="-rlvz --delete --checksum --human-readable"
+          if [ "${DRY_RUN:-false}" = "true" ]; then
+            RSYNC_FLAGS="$RSYNC_FLAGS --dry-run"
+            echo "::notice::DRY RUN - es wird nichts geschrieben."
+          fi
+          # Server-eigene Dateien im Zielverzeichnis vor --delete schützen:
+          rsync $RSYNC_FLAGS \
+            --exclude='.htaccess' \
+            --exclude='.well-known/' \
+            -e "ssh -p ${SSH_PORT}" \
+            dist/ "${SSH_USER}@${SSH_HOST}:${TARGET_PATH}"

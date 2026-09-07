@@ -1,0 +1,24 @@
+---
+// Footer.astro
+---
+
+<footer
+  class="w-full border-t border-zinc-800/80 mt-16 py-8 bg-zinc-950 text-zinc-500 text-xs"
+>
+  <div
+    class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row justify-between items-center gap-4"
+  >
+    <p>
+      © {new Date().getFullYear()} YouTube Thumbnail Tester. Alle Bilder werden rein
+      lokal verarbeitet.
+    </p>
+    <div class="flex gap-6">
+      <a href="/impressum" class="hover:text-zinc-300 transition-colors"
+        >Impressum</a
+      >
+      <a href="/datenschutz" class="hover:text-zinc-300 transition-colors"
+        >Datenschutz</a
+      >
+    </div>
+  </div>
+</footer>

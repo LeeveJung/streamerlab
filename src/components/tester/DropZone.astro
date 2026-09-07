@@ -1,0 +1,95 @@
+---
+// DropZone.astro - Clientseitiges Drag & Drop Upload-Feld
+---
+
+<div
+  id="dropzone"
+  class="relative w-full border-2 border-dashed border-zinc-700 hover:border-red-500/50 bg-zinc-900/50 hover:bg-zinc-900 rounded-xl p-8 text-center transition-all cursor-pointer group flex flex-col items-center justify-center min-h-[160px]"
+>
+  <!-- Upload Icon mit Micro-Interaction -->
+  <div
+    class="w-12 h-12 rounded-full bg-zinc-800 flex items-center justify-center mb-3 group-hover:scale-110 group-hover:bg-red-500/10 transition-all"
+  >
+    <svg
+      class="w-6 h-6 text-zinc-400 group-hover:text-red-500 transition-colors"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+    >
+      <path
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+      ></path>
+    </svg>
+  </div>
+
+  <p
+    class="text-sm font-medium text-zinc-200 group-hover:text-white transition-colors"
+  >
+    Thumbnail hierher ziehen oder <span
+      class="text-red-500 underline underline-offset-4">klicken</span
+    >
+  </p>
+  <p class="text-xs text-zinc-500 mt-1">
+    Unterstützt PNG, JPG, WebP (Empfohlene Auflösung: 1280×720px)
+  </p>
+
+  <!-- Verstecktes Native File Input -->
+  <input
+    type="file"
+    id="dropzone-file-input"
+    accept="image/png, image/jpeg, image/webp"
+    class="hidden"
+  />
+</div>
+
+<script>
+  import { ThumbnailEngine } from "../../scripts/thumbnail-engine";
+
+  const engine = ThumbnailEngine.getInstance();
+  const dropzone = document.getElementById("dropzone");
+  const fileInput = document.getElementById(
+    "dropzone-file-input",
+  ) as HTMLInputElement;
+
+  if (dropzone && fileInput) {
+    // Click auf Dropzone öffnet Dateidialog
+    dropzone.addEventListener("click", () => {
+      fileInput.click();
+    });
+
+    // File Input Change
+    fileInput.addEventListener("change", (e) => {
+      const target = e.target as HTMLInputElement;
+      if (target.files && target.files[0]) {
+        engine.handleFileSelect(target.files[0]);
+      }
+    });
+
+    // Drag & Drop Event-Handling mit Hover-Highlighting
+    ["dragenter", "dragover"].forEach((eventName) => {
+      dropzone.addEventListener(eventName, (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        dropzone.classList.add("border-red-500", "bg-zinc-800/80");
+      });
+    });
+
+    ["dragleave", "drop"].forEach((eventName) => {
+      dropzone.addEventListener(eventName, (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        dropzone.classList.remove("border-red-500", "bg-zinc-800/80");
+      });
+    });
+
+    dropzone.addEventListener("drop", (e) => {
+      const dt = (e as DragEvent).dataTransfer;
+      if (dt && dt.files && dt.files[0]) {
+        engine.handleFileSelect(dt.files[0]);
+      }
+    });
+  }
+</script>

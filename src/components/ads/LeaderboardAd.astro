@@ -1,0 +1,17 @@
+---
+import { SITE_CONFIG } from "../../config";
+---
+
+{
+  SITE_CONFIG.showAds && (
+    <div class="w-full max-w-[728px] min-h-[90px] bg-zinc-900/40 border border-zinc-800/60 rounded-lg flex items-center justify-center overflow-hidden my-4">
+      <ins
+        class="adsbygoogle"
+        style="display:block; width:100%; height:90px;"
+        data-ad-client="ca-pub-XXXXXXXXXXXXXXXX"
+        data-ad-slot="1234567890"
+        data-ad-format="horizontal"
+      />
+    </div>
+  )
+}

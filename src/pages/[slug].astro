@@ -1,0 +1,64 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import DropZone from "../components/tester/DropZone.astro";
+import PreviewStage from "../components/tester/PreviewStage.astro";
+import Controls from "../components/tester/Controls.astro";
+import LeaderboardAd from "../components/ads/LeaderboardAd.astro";
+import SidebarAd from "../components/ads/SidebarAd.astro";
+import { SEO_PAGES, type SeoPageConfig } from "../scripts/seo-pages";
+
+export async function getStaticPaths() {
+  return SEO_PAGES.map((page) => ({
+    params: { slug: page.slug },
+    props: { page },
+  }));
+}
+
+interface Props {
+  page: SeoPageConfig;
+}
+
+const { page } = Astro.props;
+---
+
+<BaseLayout title={page.title} description={page.description}>
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+    <!-- SEO Header -->
+    <header class="text-center max-w-3xl mx-auto space-y-3">
+      <h1 class="text-3xl sm:text-4xl font-extrabold tracking-tight text-white">
+        {page.h1}
+      </h1>
+      <p class="text-sm sm:text-base text-zinc-400">
+        {page.introText}
+      </p>
+    </header>
+
+    <div class="flex justify-center">
+      <LeaderboardAd />
+    </div>
+
+    <section class="max-w-4xl mx-auto">
+      <DropZone />
+    </section>
+
+    <section class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
+      <div class="lg:col-span-2 space-y-6">
+        <PreviewStage />
+      </div>
+
+      <div class="space-y-6 lg:sticky lg:top-8">
+        <Controls />
+        <SidebarAd />
+      </div>
+    </section>
+  </main>
+</BaseLayout>
+
+<script is:inline define:vars={{ initialStateProps: page.initialStateProps }}>
+  // Initialen State für diese Landingpage vor dem Hydrieren setzen
+  window.addEventListener("DOMContentLoaded", () => {
+    if (window.ThumbnailEngine) {
+      window.ThumbnailEngine.getInstance().updateState(initialStateProps);
+    }
+  });
+</script>
