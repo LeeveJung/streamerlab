@@ -1,0 +1,5 @@
+# https://www.streamerlab.de/robots.txt
+User-agent: *
+Allow: /
+
+Sitemap: https://www.streamerlab.de/sitemap.xml

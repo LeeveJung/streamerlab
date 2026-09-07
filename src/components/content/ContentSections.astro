@@ -1,0 +1,43 @@
+---
+// ContentSections.astro - Fliesstext unter dem Tool.
+// max-w-prose (65ch) begrenzt die Zeilenlaenge auf ein lesbares Mass, waehrend
+// der Container bei max-w-3xl bleibt, damit Ueberschriften und Karten
+// untereinander auf einer Kante stehen.
+import type { ContentBlock } from "../../scripts/seo-pages";
+
+interface Props {
+  sections: ContentBlock[];
+}
+
+const { sections } = Astro.props;
+---
+
+<div class="max-w-3xl mx-auto space-y-12">
+  {
+    sections.map((section) => (
+      <section class="space-y-4">
+        <h2 class="text-2xl sm:text-3xl font-bold tracking-tight text-white">
+          {section.h2}
+        </h2>
+        {section.paragraphs.map((paragraph) => (
+          <p class="max-w-prose text-base sm:text-lg leading-relaxed text-zinc-300">
+            {paragraph}
+          </p>
+        ))}
+        {section.bullets && (
+          <ul class="max-w-prose space-y-3 pt-2">
+            {section.bullets.map((bullet) => (
+              <li class="flex gap-3 text-base leading-relaxed text-zinc-300">
+                <span
+                  class="mt-2.5 w-1.5 h-1.5 rounded-full bg-red-500/80 shrink-0"
+                  aria-hidden="true"
+                />
+                <span>{bullet}</span>
+              </li>
+            ))}
+          </ul>
+        )}
+      </section>
+    ))
+  }
+</div>

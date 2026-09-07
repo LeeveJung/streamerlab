@@ -1,0 +1,56 @@
+---
+// FaqSection.astro - Accordion via <details>, damit der Text ohne JS
+// im DOM steht und crawlbar bleibt. Das FAQPage-JSON-LD baut die Seite.
+import type { FaqItem } from "../../scripts/seo-pages";
+
+interface Props {
+  items: FaqItem[];
+  heading?: string;
+}
+
+const { items, heading = "Frequently asked questions" } = Astro.props;
+---
+
+<section class="max-w-3xl mx-auto space-y-5">
+  <h2 class="text-2xl sm:text-3xl font-bold tracking-tight text-white">
+    {heading}
+  </h2>
+
+  <div class="divide-y divide-zinc-800/80 border-y border-zinc-800/80">
+    {
+      items.map((item) => (
+        <details class="group py-4">
+          <summary class="flex items-start justify-between gap-4 cursor-pointer list-none text-zinc-100 hover:text-white transition-colors">
+            <h3 class="text-base sm:text-lg font-medium leading-snug">
+              {item.question}
+            </h3>
+            <svg
+              class="mt-1 w-5 h-5 shrink-0 text-zinc-500 transition-transform group-open:rotate-45"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              aria-hidden="true"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M12 4v16m8-8H4"
+              />
+            </svg>
+          </summary>
+          <p class="max-w-prose pt-3 pr-8 text-base sm:text-lg leading-relaxed text-zinc-300">
+            {item.answer}
+          </p>
+        </details>
+      ))
+    }
+  </div>
+</section>
+
+<style>
+  /* Safari zeigt sonst weiterhin das Standard-Dreieck. */
+  summary::-webkit-details-marker {
+    display: none;
+  }
+</style>

@@ -1,25 +1,72 @@
 ---
 // Footer.astro
+import { SEO_PAGES } from "../scripts/seo-pages";
+import { SITE_CONFIG } from "../config";
 ---
 
 <footer
-  class="w-full border-t border-zinc-800/80 mt-16 py-8 bg-zinc-950 text-zinc-500 text-xs"
+  class="w-full border-t border-zinc-800/80 mt-16 py-10 bg-zinc-950 text-zinc-500 text-sm"
 >
   <div
-    class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row justify-between items-center gap-4"
+    class="max-w-7xl mx-auto px-4 grid grid-cols-1 sm:grid-cols-3 gap-8 sm:gap-6"
   >
-    <p>
-      © {new Date().getFullYear()} YouTube Thumbnail Tester. All images are processed
-      locally in your browser.
-    </p>
-    <div class="flex gap-6">
-      <a href="/" class="hover:text-zinc-300 transition-colors">Home</a>
-      <a href="/legal-notice/" class="hover:text-zinc-300 transition-colors"
-        >Legal Notice</a
-      >
-      <a href="/privacy-policy/" class="hover:text-zinc-300 transition-colors"
-        >Privacy Policy</a
-      >
+    <div class="space-y-2">
+      <p class="font-semibold text-zinc-300 uppercase tracking-wider text-[11px]">
+        {SITE_CONFIG.siteName}
+      </p>
+      <p class="leading-relaxed">
+        Preview your thumbnail in a realistic YouTube feed before you publish.
+        All images are processed locally in your browser.
+      </p>
     </div>
+
+    <nav aria-label="Tools" class="space-y-2">
+      <p class="font-semibold text-zinc-300 uppercase tracking-wider text-[11px]">
+        Tools
+      </p>
+      <ul class="space-y-1.5">
+        <li>
+          <a href="/" class="hover:text-zinc-300 transition-colors">
+            Thumbnail &amp; Safe-Zone Tester
+          </a>
+        </li>
+        {
+          SEO_PAGES.map((page) => (
+            <li>
+              <a
+                href={`/${page.slug}/`}
+                class="hover:text-zinc-300 transition-colors"
+              >
+                {page.navLabel}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+
+    <nav aria-label="Legal" class="space-y-2">
+      <p class="font-semibold text-zinc-300 uppercase tracking-wider text-[11px]">
+        Legal
+      </p>
+      <ul class="space-y-1.5">
+        <li>
+          <a
+            href="/legal-notice/"
+            class="hover:text-zinc-300 transition-colors">Legal Notice</a
+          >
+        </li>
+        <li>
+          <a
+            href="/privacy-policy/"
+            class="hover:text-zinc-300 transition-colors">Privacy Policy</a
+          >
+        </li>
+      </ul>
+    </nav>
+  </div>
+
+  <div class="max-w-7xl mx-auto px-4 mt-8 pt-6 border-t border-zinc-800/60">
+    <p>© {new Date().getFullYear()} {SITE_CONFIG.siteName}</p>
   </div>
 </footer>

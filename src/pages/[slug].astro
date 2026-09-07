@@ -5,7 +5,16 @@ import PreviewStage from "../components/tester/PreviewStage.astro";
 import Controls from "../components/tester/Controls.astro";
 import LeaderboardAd from "../components/ads/LeaderboardAd.astro";
 import SidebarAd from "../components/ads/SidebarAd.astro";
+import ContentSections from "../components/content/ContentSections.astro";
+import FaqSection from "../components/content/FaqSection.astro";
+import RelatedTools from "../components/content/RelatedTools.astro";
 import { SEO_PAGES, type SeoPageConfig } from "../scripts/seo-pages";
+import {
+  breadcrumbSchema,
+  faqSchema,
+  softwareApplicationSchema,
+} from "../scripts/schema";
+import { SITE_CONFIG } from "../config";
 
 export async function getStaticPaths() {
   return SEO_PAGES.map((page) => ({
@@ -19,16 +28,48 @@ interface Props {
 }
 
 const { page } = Astro.props;
+
+const pageUrl = new URL(`/${page.slug}/`, Astro.site).href;
+
+const jsonLd = [
+  softwareApplicationSchema({
+    name: page.h1,
+    description: page.description,
+    url: pageUrl,
+  }),
+  faqSchema(page.faq),
+  breadcrumbSchema([
+    { name: SITE_CONFIG.siteName, url: new URL("/", Astro.site).href },
+    { name: page.navLabel, url: pageUrl },
+  ]),
+];
 ---
 
-<BaseLayout title={page.title} description={page.description}>
+<BaseLayout
+  title={page.title}
+  description={page.description}
+  jsonLd={jsonLd}
+>
   <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+    <!-- Breadcrumb: matches the BreadcrumbList markup in the head -->
+    <nav aria-label="Breadcrumb" class="max-w-3xl mx-auto">
+      <ol class="flex items-center gap-2 text-xs text-zinc-500">
+        <li>
+          <a href="/" class="hover:text-zinc-300 transition-colors">
+            {SITE_CONFIG.siteName}
+          </a>
+        </li>
+        <li aria-hidden="true">/</li>
+        <li class="text-zinc-400" aria-current="page">{page.navLabel}</li>
+      </ol>
+    </nav>
+
     <!-- SEO Header -->
     <header class="text-center max-w-3xl mx-auto space-y-3">
       <h1 class="text-3xl sm:text-4xl font-extrabold tracking-tight text-white">
         {page.h1}
       </h1>
-      <p class="text-sm sm:text-base text-zinc-400">
+      <p class="text-base sm:text-lg leading-relaxed text-zinc-300">
         {page.introText}
       </p>
     </header>
@@ -51,6 +92,13 @@ const { page } = Astro.props;
         <SidebarAd />
       </div>
     </section>
+
+    <!-- Page-specific editorial content: keeps these landing pages distinct -->
+    <div class="pt-8 space-y-14 border-t border-zinc-800/60">
+      <ContentSections sections={page.sections} />
+      <FaqSection items={page.faq} />
+      <RelatedTools currentSlug={page.slug} />
+    </div>
   </main>
 </BaseLayout>
 

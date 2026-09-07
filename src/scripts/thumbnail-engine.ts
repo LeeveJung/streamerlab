@@ -81,3 +81,10 @@ export class ThumbnailEngine {
     this.listeners.forEach((listener) => listener(this.getState()));
   }
 }
+
+// Die Landingpages setzen ihren Startzustand ueber eine is:inline-Script-Tag,
+// das nicht am Modul-Graph haengt - deshalb die Klasse global verfuegbar machen.
+if (typeof window !== 'undefined') {
+  (window as unknown as { ThumbnailEngine: typeof ThumbnailEngine }).ThumbnailEngine =
+    ThumbnailEngine;
+}

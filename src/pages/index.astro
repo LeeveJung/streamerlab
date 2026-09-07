@@ -5,19 +5,36 @@ import PreviewStage from "../components/tester/PreviewStage.astro";
 import Controls from "../components/tester/Controls.astro";
 import LeaderboardAd from "../components/ads/LeaderboardAd.astro";
 import SidebarAd from "../components/ads/SidebarAd.astro";
+import ContentSections from "../components/content/ContentSections.astro";
+import HowToSteps from "../components/content/HowToSteps.astro";
+import FaqSection from "../components/content/FaqSection.astro";
+import RelatedTools from "../components/content/RelatedTools.astro";
+import { HOME_FAQ, HOME_HOW_TO, HOME_SECTIONS } from "../scripts/home-content";
+import { faqSchema, softwareApplicationSchema } from "../scripts/schema";
+import { SITE_CONFIG } from "../config";
+
+const title = "YouTube Thumbnail & Safe-Zone Tester | Free Preview Tool";
+const description =
+  "Preview your YouTube thumbnail in a real feed: safe zones, timestamp badge, mobile size and readability. Free, no sign-up, nothing is uploaded.";
+
+const jsonLd = [
+  softwareApplicationSchema({
+    name: SITE_CONFIG.siteName,
+    description,
+    url: new URL("/", Astro.site).href,
+  }),
+  faqSchema(HOME_FAQ),
+];
 ---
 
-<BaseLayout
-  title="YouTube Thumbnail & Safe-Zone Tester | Free Preview Tool"
-  description="Check your YouTube thumbnail for safe zones, timestamp badge coverage and readability on mobile devices."
->
+<BaseLayout title={title} description={description} jsonLd={jsonLd}>
   <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
     <!-- Header -->
     <header class="text-center max-w-3xl mx-auto space-y-2">
       <h1 class="text-3xl sm:text-4xl font-extrabold tracking-tight text-white">
         YouTube Thumbnail & Safe-Zone Tester
       </h1>
-      <p class="text-sm sm:text-base text-zinc-400">
+      <p class="text-base sm:text-lg leading-relaxed text-zinc-300">
         Optimize your thumbnail for a higher click-through rate (CTR). Spot
         covered corners and check how it reads on small screens.
       </p>
@@ -46,5 +63,13 @@ import SidebarAd from "../components/ads/SidebarAd.astro";
         <SidebarAd />
       </div>
     </section>
+
+    <!-- Editorial content: gives the page something to rank for -->
+    <div class="pt-8 space-y-14 border-t border-zinc-800/60">
+      <HowToSteps heading={HOME_HOW_TO.heading} steps={HOME_HOW_TO.steps} />
+      <ContentSections sections={HOME_SECTIONS} />
+      <RelatedTools heading="Focused checks" />
+      <FaqSection items={HOME_FAQ} />
+    </div>
   </main>
 </BaseLayout>

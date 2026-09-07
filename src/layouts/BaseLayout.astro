@@ -1,18 +1,48 @@
 ---
 import "../styles/global.css";
+import Nav from "../components/Nav.astro";
 import Footer from "../components/Footer.astro";
+import { SITE_CONFIG } from "../config";
 
 interface Props {
   title?: string;
   description?: string;
   lang?: string;
+  /** Zusaetzliche JSON-LD Graphen dieser Seite (FAQPage, HowTo, ...). */
+  jsonLd?: Record<string, unknown>[];
+  /** Rechtstexte gehoeren nicht in den Index. */
+  noindex?: boolean;
 }
 
 const {
   title = "YouTube Thumbnail & Safe-Zone Tester",
   description = "Test your YouTube thumbnails for free — safe zones, mobile feeds and readability.",
   lang = "en",
+  jsonLd = [],
+  noindex = false,
 } = Astro.props;
+
+// Astro.site kommt aus astro.config.mjs und ist damit die eine Quelle der
+// kanonischen Adresse. Trailing Slash bleibt erhalten (build.format: directory).
+const canonical = new URL(Astro.url.pathname, Astro.site).href;
+
+// Sobald ein Share-Bild unter public/ liegt, in config.ts den Pfad eintragen -
+// dann greifen og:image und die grosse Twitter-Card automatisch.
+const ogImage = SITE_CONFIG.ogImage
+  ? new URL(SITE_CONFIG.ogImage, Astro.site).href
+  : null;
+
+const graphs: Record<string, unknown>[] = [
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "@id": `${new URL("/", Astro.site).href}#website`,
+    name: SITE_CONFIG.siteName,
+    url: new URL("/", Astro.site).href,
+    inLanguage: "en",
+  },
+  ...jsonLd,
+];
 ---
 
 <!doctype html>
@@ -22,11 +52,51 @@ const {
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{title}</title>
     <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    {noindex && <meta name="robots" content="noindex, follow" />}
+
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/x-icon" href="/favicon.ico" sizes="32x32" />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={SITE_CONFIG.siteName} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:locale" content="en_US" />
+    {
+      ogImage && (
+        <>
+          <meta property="og:image" content={ogImage} />
+          <meta property="og:image:width" content="1200" />
+          <meta property="og:image:height" content="630" />
+        </>
+      )
+    }
+
+    <!-- Twitter / X -->
+    <meta
+      name="twitter:card"
+      content={ogImage ? "summary_large_image" : "summary"}
+    />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    {ogImage && <meta name="twitter:image" content={ogImage} />}
+
+    <meta name="theme-color" content="#09090b" />
+
+    {
+      graphs.map((graph) => (
+        <script type="application/ld+json" set:html={JSON.stringify(graph)} />
+      ))
+    }
   </head>
   <body
     class="bg-zinc-950 text-zinc-100 min-h-screen flex flex-col justify-between antialiased selection:bg-red-500 selection:text-white"
   >
+    <Nav />
+
     <!-- Main content grows to fill available space -->
     <div class="flex-1">
       <slot />

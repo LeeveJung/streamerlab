@@ -1,0 +1,40 @@
+---
+// RelatedTools.astro - kontextnahe interne Links. Verteilt Link-Equity
+// zwischen den Tool-Seiten, statt sie nur im Footer zu sammeln.
+import { getRelatedPages } from "../../scripts/seo-pages";
+
+interface Props {
+  /** Slug der aktuellen Seite, damit sie sich nicht selbst verlinkt. */
+  currentSlug?: string;
+  heading?: string;
+}
+
+const { currentSlug = "", heading = "Other checks for the same thumbnail" } =
+  Astro.props;
+
+const related = getRelatedPages(currentSlug);
+---
+
+<section class="max-w-3xl mx-auto space-y-5">
+  <h2 class="text-2xl sm:text-3xl font-bold tracking-tight text-white">
+    {heading}
+  </h2>
+
+  <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+    {
+      related.map((page) => (
+        <a
+          href={`/${page.slug}/`}
+          class="block p-5 rounded-xl bg-zinc-900/60 border border-zinc-800 hover:border-red-500/60 hover:bg-zinc-900 transition-colors group"
+        >
+          <span class="block text-lg font-semibold text-white group-hover:text-red-400 transition-colors">
+            {page.navLabel}
+          </span>
+          <span class="block mt-2 text-base leading-relaxed text-zinc-400">
+            {page.introText}
+          </span>
+        </a>
+      ))
+    }
+  </div>
+</section>
