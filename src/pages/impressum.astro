@@ -3,24 +3,31 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 ---
 
 <BaseLayout title="Impressum | YouTube Thumbnail Tester">
-  <main class="max-w-3xl mx-auto px-4 py-12 space-y-6">
-    <h1 class="text-3xl font-bold text-white">Impressum</h1>
+  <main class="max-w-3xl mx-auto px-4 py-12">
+    <a
+      href="/"
+      class="inline-flex items-center gap-2 mb-10 text-sm text-zinc-400 hover:text-white transition-colors"
+    >
+      <span aria-hidden="true">&larr;</span> Zur&uuml;ck zur Startseite
+    </a>
 
-    <div class="space-y-4 text-zinc-300 text-sm leading-relaxed">
-      <p><strong>Angaben gemäß § 5 DDG:</strong></p>
+    <div class="legal-prose">
+      <h1>Impressum</h1>
+
+      <h2>Angaben gem&auml;&szlig; &sect; 5 DDG</h2>
       <p>
         Christoph Brauer<br />
-        Endenicher Straße 271<br />
+        Endenicher Stra&szlig;e 271<br />
         53121 Bonn
       </p>
 
-      <p><strong>Kontakt:</strong></p>
+      <h2>Kontakt</h2>
       <p>
-        E-Mail: info@streamerlab.de<br />
+        E-Mail: <a href="mailto:info@streamerlab.de">info@streamerlab.de</a><br />
         Telefon: +49 173 2783942
       </p>
 
-      <p><strong>Redaktionell verantwortlich:</strong></p>
+      <h2>Redaktionell verantwortlich</h2>
       <p>[Dein Name, Adresse wie oben]</p>
     </div>
   </main>
