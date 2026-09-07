@@ -8,8 +8,8 @@ import SidebarAd from "../components/ads/SidebarAd.astro";
 ---
 
 <BaseLayout
-  title="YouTube Thumbnail & Safe-Zone Tester | Kostenloses Preview Tool"
-  description="Prüfe dein YouTube-Thumbnail auf Safe-Zones, Badge-Abdeckungen durch Zeitstempel und Lesbarkeit auf Mobilgeräten."
+  title="YouTube Thumbnail & Safe-Zone Tester | Free Preview Tool"
+  description="Check your YouTube thumbnail for safe zones, timestamp badge coverage and readability on mobile devices."
 >
   <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
     <!-- Header -->
@@ -18,12 +18,12 @@ import SidebarAd from "../components/ads/SidebarAd.astro";
         YouTube Thumbnail & Safe-Zone Tester
       </h1>
       <p class="text-sm sm:text-base text-zinc-400">
-        Optimiere dein Thumbnail für hohe Click-Through-Rates (CTR). Prüfe
-        verdeckte Ecken und Unschärfe auf Smartphones.
+        Optimize your thumbnail for a higher click-through rate (CTR). Spot
+        covered corners and check how it reads on small screens.
       </p>
     </header>
 
-    <!-- Leaderboard Ad Slot (CLS-geschützt) -->
+    <!-- Leaderboard ad slot (CLS-safe) -->
     <div class="flex justify-center">
       <LeaderboardAd />
     </div>
@@ -35,12 +35,12 @@ import SidebarAd from "../components/ads/SidebarAd.astro";
 
     <!-- Workspace Grid -->
     <section class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
-      <!-- Left Column: Canvas Preview (2/3 Breite) -->
+      <!-- Left column: canvas preview (2/3 width) -->
       <div class="lg:col-span-2 space-y-6">
         <PreviewStage />
       </div>
 
-      <!-- Right Column: Controls & Sticky Ad (1/3 Breite) -->
+      <!-- Right column: controls & sticky ad (1/3 width) -->
       <div class="space-y-6 lg:sticky lg:top-8">
         <Controls />
         <SidebarAd />

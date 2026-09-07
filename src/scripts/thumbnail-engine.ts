@@ -4,7 +4,7 @@ export type ViewContext = 'desktop' | 'mobile' | 'sidebar';
 export interface TesterState {
   imageSrc: string | null;
   channelName: string;
-  videoTitle: string; // <-- NEU: Videotitel
+  videoTitle: string;
   badgeType: BadgeType;
   badgeText: string;
   viewContext: ViewContext;
@@ -21,8 +21,8 @@ export class ThumbnailEngine {
 
   private state: TesterState = {
     imageSrc: null,
-    channelName: 'Dein Kanalname',
-    videoTitle: 'Dein epischer Videotitel in der YouTube Feed-Vorschau...', // Standardwert
+    channelName: 'Your Channel Name',
+    videoTitle: 'Your epic video title in the YouTube feed preview...',
     badgeType: 'short',
     badgeText: '10:42',
     viewContext: 'desktop',

@@ -5,16 +5,18 @@ import Footer from "../components/Footer.astro";
 interface Props {
   title?: string;
   description?: string;
+  lang?: string;
 }
 
 const {
   title = "YouTube Thumbnail & Safe-Zone Tester",
-  description = "Test deine YouTube Thumbnails kostenlos auf Safe-Zones, Mobile-Feeds und Lesbarkeit.",
+  description = "Test your YouTube thumbnails for free — safe zones, mobile feeds and readability.",
+  lang = "en",
 } = Astro.props;
 ---
 
 <!doctype html>
-<html lang="de" class="dark">
+<html lang={lang} class="dark">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -25,12 +27,12 @@ const {
   <body
     class="bg-zinc-950 text-zinc-100 min-h-screen flex flex-col justify-between antialiased selection:bg-red-500 selection:text-white"
   >
-    <!-- Hauptinhalt wächst flexibel -->
+    <!-- Main content grows to fill available space -->
     <div class="flex-1">
       <slot />
     </div>
 
-    <!-- Globaler Footer -->
+    <!-- Global footer -->
     <Footer />
   </body>
 </html>
