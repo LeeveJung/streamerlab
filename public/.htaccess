@@ -1,0 +1,13 @@
+# Kanonische Adresse ist https://www.streamerlab.de
+# Diese Datei wird aus dem Repo deployt - Aenderungen bitte hier, nicht auf dem Server.
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+
+  # 1. Alles ohne www dauerhaft auf die www-Variante umleiten (inkl. Wechsel auf HTTPS).
+  RewriteCond %{HTTP_HOST} !^www\. [NC]
+  RewriteRule ^ https://www.%{HTTP_HOST}%{REQUEST_URI} [R=301,L]
+
+  # 2. Bereits www, aber unverschluesselt: auf HTTPS umleiten.
+  RewriteCond %{HTTPS} !=on
+  RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [R=301,L]
+</IfModule>

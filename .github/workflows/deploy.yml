@@ -80,9 +80,8 @@ jobs:
             RSYNC_FLAGS="$RSYNC_FLAGS --dry-run"
             echo "::notice::DRY RUN - es wird nichts geschrieben."
           fi
-          # Server-eigene Dateien im Zielverzeichnis vor --delete schuetzen:
+          # .well-known/ (Let's Encrypt) vor --delete schuetzen; .htaccess kommt aus public/:
           rsync $RSYNC_FLAGS \
-            --exclude='.htaccess' \
             --exclude='.well-known/' \
             -e "ssh -i ~/.ssh/deploy_key -o IdentitiesOnly=yes -p ${SSH_PORT}" \
             dist/ "${SSH_USER}@${SSH_HOST}:${TARGET_PATH}"

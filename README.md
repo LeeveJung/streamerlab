@@ -63,5 +63,12 @@ Workflow: [.github/workflows/deploy.yml](.github/workflows/deploy.yml)
 | `DEPLOY_PATH` | Zielverzeichnis auf dem Server (Web-Root) | `/var/www/html/` |
 
 > ⚠️ `rsync --delete` löscht im Zielverzeichnis alles, was nicht im Build enthalten ist.
-> `.htaccess` und `.well-known/` sind ausgenommen. `DEPLOY_PATH` vor dem ersten
+> `.well-known/` (Let's Encrypt) ist ausgenommen. `DEPLOY_PATH` vor dem ersten
 > Deployment unbedingt prüfen — am besten einmal per Dry-Run.
+
+### Domain-Kanonisierung
+
+Kanonische Adresse ist **https://www.streamerlab.de**. Aufrufe ohne `www` und
+unverschluesselte Aufrufe werden per 301 dorthin umgeleitet. Die Regeln stehen in
+[public/.htaccess](public/.htaccess) und werden mitdeployt - Aenderungen also im Repo
+vornehmen, nicht auf dem Server.
