@@ -10,4 +10,9 @@
   # 2. Bereits www, aber unverschluesselt: auf HTTPS umleiten.
   RewriteCond %{HTTPS} !=on
   RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [R=301,L]
+
+  # 3. Frueher deutsche Pfade der Rechtsseiten - dauerhaft auf die englischen
+  #    umleiten, damit bereits geteilte Links weiter funktionieren.
+  RewriteRule ^impressum/?$ /legal-notice/ [R=301,L]
+  RewriteRule ^datenschutz/?$ /privacy-policy/ [R=301,L]
 </IfModule>

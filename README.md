@@ -72,3 +72,6 @@ Kanonische Adresse ist **https://www.streamerlab.de**. Aufrufe ohne `www` und
 unverschluesselte Aufrufe werden per 301 dorthin umgeleitet. Die Regeln stehen in
 [public/.htaccess](public/.htaccess) und werden mitdeployt - Aenderungen also im Repo
 vornehmen, nicht auf dem Server.
+
+Dort liegen ausserdem 301-Weiterleitungen der frueheren deutschen Pfade
+`/impressum` und `/datenschutz` auf `/legal-notice/` und `/privacy-policy/`.
